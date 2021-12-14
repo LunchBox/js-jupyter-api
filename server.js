@@ -2,7 +2,7 @@ const express = require('express')
 const app = express()
 const port = 3080
 
-const rootFolder = '/home/cpttm/Documents/development/js-jupyter/docs/'
+const rootFolder = './docs/'
 const path = require('path')
 const fs = require('fs')
 const util = require('util')
