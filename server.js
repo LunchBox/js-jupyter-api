@@ -15,8 +15,9 @@ const rootFolder = "./docs/";
 
 const readdir = util.promisify(fs.readdir);
 
-async function getFileList() {
-	return await readdir(rootFolder).then((files) => {
+async function getFileList(folderPath = "/") {
+	const targetPath = path.join(rootFolder, folderPath);
+	return await readdir(targetPath).then((files) => {
 		return files.map((fileName) => {
 			const filePath = path.join(rootFolder, fileName);
 			const stats = fs.statSync(filePath);
@@ -31,16 +32,18 @@ async function getFileList() {
 	});
 }
 
-app.get("/", async (req, res) => {
-	const fileList = await getFileList();
+app.get("/files", async (req, res) => {
+	console.log(req.query);
+	const fileList = await getFileList(req.query.path);
+	console.log(fileList);
 	res.send(JSON.stringify(fileList));
 });
 
 app.post("/files", async (req, res) => {
 	console.log(req.body);
-	const { fileName, isDirectory } = req.body;
+	const { path: dirPath, fileName, isDirectory } = req.body;
 
-	const filePath = path.join(rootFolder, fileName);
+	const filePath = path.join(rootFolder, dirPath, fileName);
 	console.log(filePath);
 
 	if (isDirectory && !fs.existsSync(filePath)) {
